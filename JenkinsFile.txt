@@ -1,0 +1,66 @@
+pipeline {
+    agent any
+    
+    environment {
+        // Define environment variables if needed
+        NODE_HOME = '/usr/local/node'
+    }
+
+    stages {
+        // Stage 1: Checkout Code
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/Aarti2022/Web_App.git'
+            }
+        }
+
+        // Stage 2: Install Dependencies
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    // Use npm to install dependencies
+                    sh 'npm install'
+                }
+            }
+        }
+
+        // Stage 3: Run Tests
+        stage('Test') {
+            steps {
+                script {
+                    // Run tests with npm
+                    sh 'npm test'
+                }
+            }
+        }
+
+        // Stage 4: Build Docker Image
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    // Build a Docker image
+                    sh 'docker build -t your-image-name .'
+                }
+            }
+        }//
+
+        // Stage 5: Deploy (optional)
+        stage('Deploy') {
+            steps {
+                script {
+                    // Deploy to a server (e.g., AWS, Kubernetes, etc.)
+                    sh 'kubectl apply -f k8s-deployment.yaml'
+                }
+            }
+        }
+    }//
+
+    post {
+        success {
+            echo 'Pipeline was successful!'
+        }
+        failure {
+            echo 'Pipeline failed.'
+        }
+    }
+}
